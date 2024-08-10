@@ -32,6 +32,7 @@ class LibraryApp
     @ui.remove_button.signal_connect('clicked') { remove_book }
     @ui.update_button.signal_connect('clicked') { update_book }
     @ui.book_tree_view.signal_connect('cursor_changed') { on_book_selected }
+    @ui.book_tree_view.selection.signal_connect('changed') { on_selection_changed }
   end
 
   def update_book_list
@@ -53,6 +54,20 @@ class LibraryApp
       @ui.author_entry.text = iter[2]
       @ui.isbn_entry.text = iter[3]
     end
+  end
+
+  def on_selection_changed
+    selection = @ui.book_tree_view.selection
+    if !selection.selected
+      @selected_book_id = nil
+      clear_input_fields
+    end
+  end
+
+  def clear_input_fields
+    @ui.title_entry.text = ''
+    @ui.author_entry.text = ''
+    @ui.isbn_entry.text = ''
   end
 end
 

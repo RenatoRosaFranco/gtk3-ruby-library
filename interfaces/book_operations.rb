@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module BookOperations
   def add_book
     title  = @ui.title_entry.text
@@ -10,6 +8,7 @@ module BookOperations
     @library.save_to_json
 
     update_book_list
+    clear_input_fields
 
     puts "Livro adicionado: #{title} por #{author} (ISBN: #{isbn})"
   end
@@ -28,6 +27,7 @@ module BookOperations
       book.isbn = isbn
       @library.save_to_json
       update_book_list
+      clear_input_fields
       puts "Livro atualizado: ID #{@selected_book_id}"
     end
   end
@@ -38,7 +38,16 @@ module BookOperations
     @library.remove_book_by_id(@selected_book_id)
     @library.save_to_json
     update_book_list
+    clear_input_fields
     puts "Livro removido: ID #{@selected_book_id}"
     @selected_book_id = nil
+  end
+
+  private
+
+  def clear_input_fields
+    @ui.title_entry.text = ''
+    @ui.author_entry.text = ''
+    @ui.isbn_entry.text = ''
   end
 end
