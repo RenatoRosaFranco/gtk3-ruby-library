@@ -1,8 +1,20 @@
 [
   {
-    "title": "Harry Potter",
-    "author": "J.K Rowling",
-    "isbn": "I1823436",
+    "title": "IT",
+    "author": "Stephen King",
+    "isbn": "IASJDU8",
+    "available": true
+  },
+  {
+    "title": "Game of Thrones",
+    "author": "Renato ",
+    "isbn": "Testasdadads",
+    "available": true
+  },
+  {
+    "title": "Game of Thrones",
+    "author": "Renato ",
+    "isbn": "Testasdadads",
     "available": true
   }
 ]

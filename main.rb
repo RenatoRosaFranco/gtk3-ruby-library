@@ -1,46 +1,60 @@
 require 'gtk3'
 require_relative 'lib/library'
 require_relative 'lib/book'
+require_relative 'ui/library_ui'
+require_relative 'interfaces/book_operations'
 
 class LibraryApp
   FILE_PATH = 'data/library.json'
 
+  include BookOperations
+
   def initialize
     @library = Library.new
+    @ui = LibraryUI.new
 
-    @builder = Gtk::Builder.new
-    @builder.add_from_file('ui.glade')
+    setup_signals
 
-    @window = @builder.get_object('main_window')
-    @window.signal_connect('destroy') { Gtk.main_quit }
+    update_book_list
 
-    @add_button = @builder.get_object('add_button')
-    @add_button.signal_connect('clicked') { add_book }
-
-    @list_button = @builder.get_object('list_button')
-    @list_button.signal_connect('clicked') { list_books }
-
-    @window.show_all
-  end
-
-  def add_book
-    title  = @builder.get_object('title_entry').text
-    author = @builder.get_object('author_entry').text
-    isbn   = @builder.get_object('isbn_entry').text
-
-    @library.add_book(Book.new(title, author, isbn))
-    @library.save_to_json(FILE_PATH)
-
-    puts "Livro adicionado: #{title} por #{author} (ISBN: #{isbn})"
+    @ui.window.show_all
   end
 
   def list_books
+    update_book_list
+  end
+
+  private
+
+  def setup_signals
+    @ui.add_button.signal_connect('clicked') { add_book }
+    @ui.list_button.signal_connect('clicked') { list_books }
+    @ui.remove_button.signal_connect('clicked') { remove_book }
+    @ui.update_button.signal_connect('clicked') { update_book }
+    @ui.book_tree_view.signal_connect('cursor_changed') { on_book_selected }
+  end
+
+  def update_book_list
+    @ui.book_list_store.clear
     @library.list_books.each do |book|
-      puts "#{book.title} - #{book.author} (#{book.isbn})"
+      iter = @ui.book_list_store.append
+      iter[0] = book.id
+      iter[1] = book.title
+      iter[2] = book.author
+      iter[3] = book.isbn
+    end
+  end
+
+  def on_book_selected
+    selection = @ui.book_tree_view.selection
+    if iter = selection.selected
+      @selected_book_id = iter[0]
+      @ui.title_entry.text = iter[1]
+      @ui.author_entry.text = iter[2]
+      @ui.isbn_entry.text = iter[3]
     end
   end
 end
-
 
 Gtk.init
 LibraryApp.new

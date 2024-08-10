@@ -5,19 +5,35 @@ require_relative 'book'
 require_relative 'library_storage'
 
 class Library
-	attr_reader :books, :storage
+	PATH = 'data/library.json'
 
-	def initialize
+	attr_reader :books, :storage, :file_path
+
+	def initialize(file_path = PATH)
+		@file_path = file_path
 		@storage = LibraryStorage
-		@books = load_from_json('data/library.json')
+		@books = load_from_json
+		list_books
 	end
 
 	def add_book(book)
 		books << book
+		save_to_json
+		list_books
+	end
+
+	def remove_book_by_id(id)
+		books.reject! { |book| book.id == id }
+	end
+
+	def find_book_by_id(id)
+		books.find { |book| book.id == id }
 	end
 
 	def remove_book(isbn)
 		books.reject! { |book| book.isbn == isbn }
+		save_to_json
+		list_books
 	end
 
 	def list_books
@@ -29,18 +45,24 @@ class Library
 	end
 
 	def borrow_book(isbn)
-    toggle_availability(isbn, true)
+    if toggle_availability(isbn, true)
+			save_to_json
+			list_books
+		end
 	end
 
 	def return_book(isbn)
-    toggle_availability(isbn, false)
+    if toggle_availability(isbn, false)
+			save_to_json
+			list_books
+		end
 	end
 
-	def save_to_json(file_path)
+	def save_to_json
 		storage.save_to_json(books, file_path)
 	end
 
-	def load_from_json(file_path)
+	def load_from_json
 		storage.load_from_json(file_path)
 	end
 
