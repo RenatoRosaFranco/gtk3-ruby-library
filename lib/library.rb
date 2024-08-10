@@ -2,11 +2,13 @@
 
 require 'json'
 require_relative 'book'
+require_relative 'library_storage'
 
 class Library
-	attr_reader :books
+	attr_reader :books, :storage
 
 	def initialize
+		@storage = LibraryStorage
 		@books = load_from_json('data/library.json')
 	end
 
@@ -35,23 +37,11 @@ class Library
 	end
 
 	def save_to_json(file_path)
-		File.open(file_path, 'w') do |file|
-			json_data = @books.map { |book| { title: book.title, author: book.author, available: book.available }}
-			file.write(JSON.pretty_generate(json_data))
-		end
+		storage.save_to_json(books, file_path)
 	end
 
 	def load_from_json(file_path)
-		if File.exist?(file_path)
-			json_data = JSON.parse(File.read(file_path))
-			@books = json_data.map do |book_data|
-				Book.new(book_data['title'], book_data['author'], book_data['isbn']).tap do
-					book.available = book_data['available']
-				end
-			end
-		else
-			puts "File not found: #{file_path}"
-		end
+		storage.load_from_json(file_path)
 	end
 
 	def toggle_availability(isbn, make_unavailable)

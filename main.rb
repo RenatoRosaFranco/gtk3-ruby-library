@@ -7,6 +7,7 @@ class LibraryApp
 
   def initialize
     @library = Library.new
+
     @builder = Gtk::Builder.new
     @builder.add_from_file('ui.glade')
 
