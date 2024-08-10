@@ -3,6 +3,8 @@ require_relative 'lib/library'
 require_relative 'lib/book'
 
 class LibraryApp
+  FILE_PATH = 'data/library.json'
+
   def initialize
     @library = Library.new
     @builder = Gtk::Builder.new
@@ -26,6 +28,8 @@ class LibraryApp
     isbn   = @builder.get_object('isbn_entry').text
 
     @library.add_book(Book.new(title, author, isbn))
+    @library.save_to_json(FILE_PATH)
+
     puts "Livro adicionado: #{title} por #{author} (ISBN: #{isbn})"
   end
 
