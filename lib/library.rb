@@ -25,23 +25,23 @@ class Library
 		books.find { |book| book.isbn == isbn }
 	end
 
-	def borrow_book()
-		book = find_book(isbn)
-		return false unless book
-
-		if book.available
-			book.available = false
-			true
-		end
+	def borrow_book(isbn)
+    toggle_availability(isbn, true)
 	end
 
 	def return_book(isbn)
+    toggle_availability(isbn, false)
+	end
+
+	def toggle_availability(isbn, make_unavailable)
 		book = find_book(isbn)
 		return false unless book
 
-		if !book.available
-			book.available = true
+		if book.available != make_unavailable
+			book.available = make_unavailable
 			true
+		else
+			false
 		end
 	end
 end
