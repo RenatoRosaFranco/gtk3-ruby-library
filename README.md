@@ -5,9 +5,10 @@ to demonstrates the use of the Gtk3 + Glade to develop
 Ruby GUI applications.
 
 ### Next Releases
+ - 1.0.0 - Add a database to manage data and remove mock json (b3d7403)
  - 1.0.1 - Add Person Crud
  - 1.0.2 - Implements validations and error handling
- - 1.0.3 - Add a database to manage data and remove mock json
+ - 1.0.4 - Implementes filters
 
 ### How to Run
 
