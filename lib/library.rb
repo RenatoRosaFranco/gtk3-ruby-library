@@ -1,80 +1,40 @@
 # frozen_string_literal: true
 
-require 'json'
-require_relative 'book'
-require_relative 'library_storage'
-
+require_relative './book'
 class Library
-	PATH = 'data/library.json'
+  def add_book(book)
+    book.save
+  end
 
-	attr_reader :books, :storage, :file_path
+  def remove_book_by_id(id)
+    book = Book.find_by(id: id)
+    book.destroy if book
+  end
 
-	def initialize(file_path = PATH)
-		@file_path = file_path
-		@storage = LibraryStorage
-		@books = load_from_json
-		list_books
-	end
+  def find_book_by_id(id)
+    Book.find_by(id: id)
+  end
 
-	def add_book(book)
-		books << book
-		save_to_json
-		list_books
-	end
+  def remove_book(isbn)
+    book = Book.find_by(isbn: isbn)
+    book.destroy if book
+  end
 
-	def remove_book_by_id(id)
-		books.reject! { |book| book.id == id }
-	end
+  def list_books
+    Book.all
+  end
 
-	def find_book_by_id(id)
-		books.find { |book| book.id == id }
-	end
+  def borrow_book(isbn)
+    book = Book.find_by(isbn: isbn)
+    if book && book.available
+      book.update(available: false)
+    end
+  end
 
-	def remove_book(isbn)
-		books.reject! { |book| book.isbn == isbn }
-		save_to_json
-		list_books
-	end
-
-	def list_books
-		books
-	end
-
-	def find_book(isbn)
-		books.find { |book| book.isbn == isbn }
-	end
-
-	def borrow_book(isbn)
-    if toggle_availability(isbn, true)
-			save_to_json
-			list_books
-		end
-	end
-
-	def return_book(isbn)
-    if toggle_availability(isbn, false)
-			save_to_json
-			list_books
-		end
-	end
-
-	def save_to_json
-		storage.save_to_json(books, file_path)
-	end
-
-	def load_from_json
-		storage.load_from_json(file_path)
-	end
-
-	def toggle_availability(isbn, make_unavailable)
-		book = find_book(isbn)
-		return false unless book
-
-		if book.available != make_unavailable
-			book.available = make_unavailable
-			true
-		else
-			false
-		end
-	end
+  def return_book(isbn)
+    book = Book.find_by(isbn: isbn)
+    if book && !book.available
+      book.update(available: true)
+    end
+  end
 end

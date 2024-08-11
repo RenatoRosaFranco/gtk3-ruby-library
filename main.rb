@@ -1,12 +1,11 @@
 require 'gtk3'
+
 require_relative 'lib/library'
 require_relative 'lib/book'
-require_relative 'ui/library_ui'
+
 require_relative 'interfaces/book_operations'
-
+require_relative 'ui/library_ui'
 class LibraryApp
-  FILE_PATH = 'data/library.json'
-
   include BookOperations
 
   def initialize
@@ -39,7 +38,7 @@ class LibraryApp
     @ui.book_list_store.clear
     @library.list_books.each do |book|
       iter = @ui.book_list_store.append
-      iter[0] = book.id
+      iter[0] = book.id.to_s
       iter[1] = book.title
       iter[2] = book.author
       iter[3] = book.isbn

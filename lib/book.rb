@@ -1,16 +1,12 @@
 # frozen_string_literal: true
 
-class Book
-	attr_accessor :id, :title, :author, :isbn, :available
+require 'active_record'
+require_relative '../db/config'
 
-	@@id_counter = 1
+class Book < ActiveRecord::Base
+  self.table_name = 'books'
 
-	def initialize(title, author, isbn)
-		@id = @@id_counter
-		@@id_counter += 1
-		@title = title
-		@author = author
-		@isbn = isbn
-		@available = true
-	end
+  validates :title, presence: true
+  validates :author, presence: true
+  validates :isbn, presence: true, uniqueness: true
 end

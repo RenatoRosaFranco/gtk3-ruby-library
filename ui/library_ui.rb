@@ -25,7 +25,7 @@ class LibraryUI
     @isbn_entry = @builder.get_object('isbn_entry')
 
     @book_tree_view = @builder.get_object('book_tree_view')
-    @book_list_store = Gtk::ListStore.new(Integer, String, String, String)
+    @book_list_store = Gtk::ListStore.new(String, String, String, String)
 
     setup_tree_view_columns
     @book_tree_view.model = @book_list_store

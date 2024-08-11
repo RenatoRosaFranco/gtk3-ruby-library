@@ -1,16 +1,21 @@
+# frozen_string_literal: true
+
 module BookOperations
   def add_book
     title  = @ui.title_entry.text
     author = @ui.author_entry.text
     isbn   = @ui.isbn_entry.text
 
-    @library.add_book(Book.new(title, author, isbn))
-    @library.save_to_json
+    # Crie um novo livro com um hash de atributos
+    book = Book.new(title: title, author: author, isbn: isbn)
 
-    update_book_list
-    clear_input_fields
-
-    puts "Livro adicionado: #{title} por #{author} (ISBN: #{isbn})"
+    if book.save
+      update_book_list
+      clear_input_fields
+      puts "Livro adicionado: #{title} por #{author} (ISBN: #{isbn})"
+    else
+      puts "Erro ao adicionar o livro: #{book.errors.full_messages.join(', ')}"
+    end
   end
 
   def update_book
@@ -22,25 +27,27 @@ module BookOperations
 
     book = @library.find_book_by_id(@selected_book_id)
     if book
-      book.title = title
-      book.author = author
-      book.isbn = isbn
-      @library.save_to_json
-      update_book_list
-      clear_input_fields
-      puts "Livro atualizado: ID #{@selected_book_id}"
+      if book.update(title: title, author: author, isbn: isbn)
+        update_book_list
+        clear_input_fields
+        puts "Livro atualizado: ID #{@selected_book_id}"
+      else
+        puts "Erro ao atualizar o livro: #{book.errors.full_messages.join(', ')}"
+      end
     end
   end
 
   def remove_book
     return unless @selected_book_id
 
-    @library.remove_book_by_id(@selected_book_id)
-    @library.save_to_json
-    update_book_list
-    clear_input_fields
-    puts "Livro removido: ID #{@selected_book_id}"
-    @selected_book_id = nil
+    if @library.remove_book_by_id(@selected_book_id)
+      update_book_list
+      clear_input_fields
+      puts "Livro removido: ID #{@selected_book_id}"
+      @selected_book_id = nil
+    else
+      puts "Erro ao remover o livro"
+    end
   end
 
   private
