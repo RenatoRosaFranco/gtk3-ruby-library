@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 require 'rspec'
+require 'active_record'
 require_relative '../../lib/book'
 
 RSpec.describe Book do
-  let(:book) { Book.new('The Hobbit', 'J.R.R Tolkien', '978-0-395-19395-8') }
+  let(:book) { Book.create(title: 'The Hobbit', author: 'J.R.R Tolkien', isbn: '978-0-395-19395-8') }
 
   describe '#initialize' do
     it 'initializes with a title, author, and isbn' do
@@ -19,33 +20,29 @@ RSpec.describe Book do
   end
 
   describe '#title' do
-    before { book.title = 'The Lord of the Rings' }
-
     it 'allows reading and writing for :title' do
+      book.update(title: 'The Lord of the Rings')
       expect(book.title).to eq('The Lord of the Rings')
     end
   end
 
   describe '#author' do
-    before { book.author = 'George R.R Martin' }
-
     it 'allows reading and writing for :author' do
+      book.update(author: 'George R.R Martin')
       expect(book.author).to eq('George R.R Martin')
     end
   end
 
   describe '#isbn' do
-    before { book.isbn = '978-0-395-19395-7' }
-
     it 'allows reading and writing for :isbn' do
+      book.update(isbn: '978-0-395-19395-7')
       expect(book.isbn).to eq('978-0-395-19395-7')
     end
   end
 
   describe '#available' do
-    before { book.available = false }
-
     it 'allows reading and writing for :available' do
+      book.update(available: false)
       expect(book.available).to be false
     end
   end

@@ -13,6 +13,25 @@
 # it.
 #
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+require 'active_record'
+require 'sqlite3'
+
+ActiveRecord::Base.establish_connection(
+  adapter: 'sqlite3',
+  database: ':memory:'
+)
+
+ActiveRecord::Schema.define do
+  create_table :books, force: true do |t|
+    t.string :title
+    t.string :author
+    t.string :isbn
+    t.boolean :available, default: true
+
+    t.timestamps
+  end
+end
+
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
